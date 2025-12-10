@@ -14,6 +14,7 @@ The system is structured around **bounded contexts**, where each business domain
 Each service owns its logic, its data, and its lifecycle, enabling independent evolution and scalability.
 
 All external traffic enters the system through a dedicated **API Gateway**, which centralizes cross-cutting concerns such as routing, authentication, and rate limiting. This avoids duplicating infrastructure logic across services and keeps domain services focused on business rules.
+<img width="920" height="484" alt="image" src="https://github.com/user-attachments/assets/606d96f5-f803-443c-854a-fe772954465f" />
 
 ---
 
