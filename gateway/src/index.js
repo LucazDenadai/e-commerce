@@ -9,7 +9,8 @@ const PORT = process.env.PORT || 3000;
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:5001';
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:5002';
 
-app.use(express.json());
+// essa linha causou o bug de nao enviar o body da requisicao
+//app.use(express.json());
 
 app.use(correlationId);
 

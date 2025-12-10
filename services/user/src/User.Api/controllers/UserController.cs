@@ -1,0 +1,28 @@
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("users")]
+public class UserController : ControllerBase
+{
+    [HttpGet("health")]
+    public IActionResult Health()
+    {
+        return Ok(new
+        {
+            status = "ok",
+            service = "user-service"
+        });
+    }
+
+    [HttpGet("profile")]
+    public IActionResult Profile()
+    {
+        // depois isso vem do banco / auth, por enquanto é mock
+        return Ok(new
+        {
+            id = "user-123",
+            name = "John Doe",
+            email = ""
+        });
+    }
+}
