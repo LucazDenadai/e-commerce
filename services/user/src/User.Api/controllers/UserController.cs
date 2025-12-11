@@ -17,7 +17,6 @@ public class UserController : ControllerBase
     [HttpGet("profile")]
     public IActionResult Profile()
     {
-        // depois isso vem do banco / auth, por enquanto é mock
         return Ok(new
         {
             id = "user-123",

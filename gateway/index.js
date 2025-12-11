@@ -1,13 +1,17 @@
 import express from 'express';
-import { correlationId } from './middlewares/correlationId.js';
-import { createServiceProxy } from './proxy/createServiceProxy.js';
-import { logger } from './middlewares/logger.js';
+import { correlationId } from './src/middlewares/correlationId.js';
+import { createServiceProxy } from './src/proxy/createServiceProxy.js';
+import { logger } from './src/middlewares/logger.js';
+import { auth } from './src/middlewares/auth.js';
+import dotenv from 'dotenv';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const USER_SERVICE_URL = process.env.USER_SERVICE_URL || 'http://localhost:5001';
 const PRODUCT_SERVICE_URL = process.env.PRODUCT_SERVICE_URL || 'http://localhost:5002';
+
+dotenv.config();
 
 // essa linha causou o bug de nao enviar o body da requisicao
 //app.use(express.json());
@@ -16,6 +20,7 @@ app.use(correlationId);
 
 // log básico de requisição/resposta
 app.use(logger);
+app.use(auth);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'api-gateway' });
