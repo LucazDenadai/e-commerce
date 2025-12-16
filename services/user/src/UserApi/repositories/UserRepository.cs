@@ -1,33 +1,51 @@
-using System.Collections.Concurrent;
-using System.Linq;
-using UserApi.entities;
+using Dapper;
 
 namespace UserApi.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ConcurrentDictionary<string, UserEntity> _store = new();
+        private readonly IDbConnectionFactory _connectionFactory;
 
-        public Task AddAsync(UserEntity user)
+        public UserRepository(IDbConnectionFactory connectionFactory)
         {
-            _store[user.Id] = user;
-            return Task.CompletedTask;
+            _connectionFactory = connectionFactory;
         }
 
-        public Task<UserEntity?> GetByEmailAsync(string email)
+        public async Task CreateAsync(User user)
         {
-            var user = _store.Values.FirstOrDefault(u => u.Email == email);
-            return Task.FromResult(user);
+            const string sql = """
+            INSERT INTO users (id, email, password_hash, name)
+            VALUES (@Id, @Email, @Password, @Name);
+        """;
+
+            using var connection = _connectionFactory.CreateConnection();
+            connection.Open();
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+
+                await connection.ExecuteAsync(sql, user, transaction);
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
 
-        public Task<UserEntity?> GetByIdAsync(string id)
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            return Task.FromResult(_store.TryGetValue(id, out var user) ? user : null);
-        }
+            const string sql = """
+            SELECT id, email, password_hash
+            FROM users
+            WHERE email = @Email
+        """;
 
-        public Task SaveChangesAsync()
-        {
-            return Task.CompletedTask;
+            using var connection = _connectionFactory.CreateConnection();
+            return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Email = email });
         }
     }
 }

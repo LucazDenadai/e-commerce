@@ -11,12 +11,12 @@ using UserApi.Repositories;
 [Route("auth")]
 public class AuthController : ControllerBase
 {
-    private static readonly Dictionary<string, UserEntity> Users = new();
-    private readonly IPasswordHasher<UserEntity> _passwordHasher;
+    private static readonly Dictionary<string, User> Users = new();
+    private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IConfiguration _config;
     private readonly IUserRepository _repo;
 
-    public AuthController(IPasswordHasher<UserEntity> passwordHasher, IConfiguration config,
+    public AuthController(IPasswordHasher<User> passwordHasher, IConfiguration config,
         IUserRepository repo)
     {
         _passwordHasher = passwordHasher;
@@ -35,19 +35,18 @@ public class AuthController : ControllerBase
         if (Users.ContainsKey(request.Email))
             return Conflict(new { error = "User already exists" });
 
-        var user = new UserEntity
+        var user = new User
         {
             Id = Guid.NewGuid().ToString("N"),
             Email = request.Email,
-            Password = request.Password,
+            Password = "",
             Name = request.Name
         };
 
         user.Password = _passwordHasher.HashPassword(user, request.Password);
         Users[user.Email] = user;
 
-        await _repo.AddAsync(user);
-        await _repo.SaveChangesAsync();
+        await _repo.CreateAsync(user);
 
         return Created("", new
         {
@@ -76,7 +75,7 @@ public class AuthController : ControllerBase
         });
     }
 
-    private string GenerateJwtToken(UserEntity user)
+    private string GenerateJwtToken(User user)
     {
         var key = Encoding.ASCII.GetBytes(_config["Jwt:Key"] ?? "");
         var tokenHandler = new JwtSecurityTokenHandler();

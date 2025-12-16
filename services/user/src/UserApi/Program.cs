@@ -1,4 +1,5 @@
 using System.Text;
+using Mapster;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDataProtection()
     .SetApplicationName("UserApi-Ecommerce");
 
-builder.Services.AddScoped<IPasswordHasher<UserEntity>, PasswordHasher<UserEntity>>();
+builder.Services.AddScoped<IDbConnectionFactory, NpgsqlConnectionFactory>();
+builder.Services.AddMapster();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // CONFIGURAÇÃO JWT (ESSENCIAL)
