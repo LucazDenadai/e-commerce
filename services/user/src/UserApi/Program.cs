@@ -3,7 +3,6 @@ using Mapster;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using UserApi.entities;
 using UserApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
