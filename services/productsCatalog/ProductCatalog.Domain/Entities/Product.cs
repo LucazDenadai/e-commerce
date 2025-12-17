@@ -8,22 +8,20 @@ public class Product
     public string Category { get; private set; }
     public bool IsActive { get; private set; }
 
-    public Dictionary<string, object> AdditionalData { get; private set; }
-
-    protected Product() { } // ORM / Mongo
+    public string? AdditionalData { get; private set; }
 
     public Product(
         string name,
         decimal price,
         string category,
-        Dictionary<string, object>? additionalData = null)
+        string? additionalData = null)
     {
         Id = Guid.NewGuid();
         Name = name;
         Price = price;
         Category = category;
         IsActive = true;
-        AdditionalData = additionalData ?? new();
+        AdditionalData = additionalData;
     }
 
     public void Deactivate()

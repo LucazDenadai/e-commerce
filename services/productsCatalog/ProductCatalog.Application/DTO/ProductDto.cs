@@ -5,5 +5,5 @@ public record ProductDto(
     decimal Price,
     string Category,
     bool IsActive,
-    Dictionary<string, object> AdditionalData
+    string? AdditionalData
 );

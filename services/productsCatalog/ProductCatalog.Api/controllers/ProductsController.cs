@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductCatalog.Application.Services;
 using ProductCatalog.Application.DTO;
+using System.Text.Json;
 
 namespace ProductCatalog.Api.Controllers;
 
@@ -18,11 +19,15 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateProductRequest request)
     {
+        var additionalDataJson = request.AdditionalData is null
+        ? null
+        : JsonSerializer.Serialize(request.AdditionalData);
+
         var command = new CreateProductCommand(
             request.Name,
             request.Price,
             request.Category,
-            request.AdditionalData
+            additionalDataJson
         );
 
         var product = await _productService.CreateAsync(command);
